@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TankPlayerController.h"
+#define OUT
 
 void ATankPlayerController::BeginPlay()
 {
@@ -24,7 +25,7 @@ void ATankPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	//UE_LOG(LogTemp, Warning, TEXT("Player tick."));
 
-	AimTowardsCrossheir();
+	AimTowardsCrosshair();
 }
 
 ATank * ATankPlayerController::GetControlledTank() const
@@ -32,11 +33,36 @@ ATank * ATankPlayerController::GetControlledTank() const
 	return Cast<ATank>(GetPawn());
 }
 
-void ATankPlayerController::AimTowardsCrossheir()
+void ATankPlayerController::AimTowardsCrosshair()
 {
-	if (!GetControlledTank())
-	{
-		return;
-	}
+	if (!GetControlledTank()) 	{	return;	}
 
+	FVector HitLocation;
+	if (GetSightRayHitLocation(HitLocation))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HitLocation : %s"), *HitLocation.ToString());
+	}
+}
+
+bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const
+{
+	FHitResult HitResult;
+	HitLocation = FVector(1.0);
+	//FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	int32 ViewPortSizeX, ViewPortSizeY;
+	GetViewportSize(ViewPortSizeX, ViewPortSizeY);
+	FVector2D ScreenLocation = FVector2D(ViewPortSizeX * CrossHairXLocation, ViewPortSizeY * CrossHairYLocation);
+	//UE_LOG(LogTemp, Warning, TEXT("ScreenLocation : %s"), *ScreenLocation.ToString());
+
+	/*GetWorld()->LineTraceSingleByObjectType
+		(
+			OUT HitResult,
+			GetReachLineStart(),
+			GetReachLineEnd(),
+			FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+			TraceParameters
+			);*/
+
+	return true;
 }
