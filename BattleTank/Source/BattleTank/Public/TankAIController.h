@@ -16,9 +16,12 @@ class BATTLETANK_API ATankAIController : public AAIController
 {
 	GENERATED_BODY()
 	
+private:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
-	ATank * GetControlledTank() const;
+	ATank* GetControlledTank() const;
+
+	ATank* GetPlayerTank() const;
 	
 };
