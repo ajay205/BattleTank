@@ -44,15 +44,24 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LauchSpeed)
 	//auto TankName = GetOwner()->GetName();
 	//auto BarrelLocation = Barrel->GetComponentLocation().ToString();
 	//UE_LOG(LogTemp, Warning, TEXT("%s Aim At : %s from %s"), *TankName, *HitLocation.ToString(), *BarrelLocation);
-	if (UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, HitLocation, LauchSpeed, false, 0, 0, ESuggestProjVelocityTraceOption::DoNotTrace))
+	if (UGameplayStatics::SuggestProjectileVelocity(this, OutLaunchVelocity, StartLocation, HitLocation, LauchSpeed, ESuggestProjVelocityTraceOption::DoNotTrace))
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		auto TankName = GetOwner()->GetName();
 		UE_LOG(LogTemp, Warning, TEXT("%s Aiming At : %s"), *TankName, *AimDirection.ToString());
+		MoveBarrelTowards(AimDirection);
 	}
 }
 
 void UTankAimingComponent::SetBarrelReference(UStaticMeshComponent* BarrelToSet)
 {
 	Barrel = BarrelToSet;
+}
+
+void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
+{
+	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
+	auto AimAsRotator = AimDirection.Rotation();
+	auto DeltaRotator = AimAsRotator - BarrelRotator;
+	UE_LOG(LogTemp, Warning, TEXT("AimAsRotator : %s"), *AimAsRotator.ToString());
 }
